@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>N-dine-lang-math — 4-Stage Diné Math Demo</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-2: #273549;
+      --border: #334155;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --green: #22c55e;
+      --purple: #a78bfa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px;
+      line-height: 1.5;
+    }
+    .container { max-width: 1000px; margin: 0 auto; }
+    h1 { margin: 0 0 4px; font-size: 1.6rem; }
+    .subtitle { color: var(--muted); margin-bottom: 18px; font-size: 0.95rem; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+    .tab-btn {
+      padding: 8px 16px;
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .tab-btn.active { background: var(--accent); color: #0f172a; border-color: var(--accent); }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    input[type="text"] {
+      flex: 1;
+      min-width: 220px;
+      padding: 10px 12px;
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    button.primary {
+      padding: 10px 18px;
+      background: var(--accent);
+      color: #0f172a;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .presets { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .chip {
+      padding: 4px 10px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .stage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .stage {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .stage h3 { margin: 0 0 8px; font-size: 0.95rem; color: var(--accent); }
+    .mono { font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.85rem; color: #cbd5e1; }
+    .dine { color: var(--green); font-weight: 600; margin-top: 4px; }
+    .num-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 10px;
+    }
+    .num-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+    }
+    .num-val { font-size: 1.3rem; font-weight: 700; color: var(--accent); }
+    .shape-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    .shape-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>N-dine-lang-math</h1>
+  <div class="subtitle">4-Stage Diné Math Demo (Thinking → Planning → Implementing → Reflecting) powered by <span class="mono">gemma3-1b-ndine-Q4_K_M.gguf</span></div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('math', this)">Arithmetic &amp; 4-Stage Solver</button>
+    <button class="tab-btn" onclick="showTab('geometry', this)">Numbers &amp; Geometry</button>
+    <button class="tab-btn" onclick="showTab('quantum', this)">Quantum Math Preview</button>
+  </div>
+
+  <!-- Tab 1: 4-Stage Math Solver -->
+  <div id="tab-math" class="panel active">
+    <div class="card">
+      <div class="row">
+        <input type="text" id="exprInput" value="(2 + 3) * 2" placeholder="Enter math expression, e.g. (2 + 3) * 2">
+        <button id="solveBtn" class="primary" onclick="solveMath()">Solve in 4 Stages</button>
+      </div>
+      <div id="solveStatus" style="margin-top:8px; color:var(--accent); font-size:0.9rem; display:none;"></div>
+      <div class="presets">
+        <span style="color:var(--muted); font-size:0.85rem;">Try:</span>
+        <button class="chip" onclick="setExpr('2 + 3')">2 + 3</button>
+        <button class="chip" onclick="setExpr('5 + 5')">5 + 5</button>
+        <button class="chip" onclick="setExpr('(2 + 3) * 2')">(2 + 3) * 2</button>
+        <button class="chip" onclick="setExpr('8 / 2')">8 / 2</button>
+      </div>
+    </div>
+
+    <div id="mathResult" class="card" style="display:none;">
+      <div style="font-size:1.15rem; margin-bottom:12px;">
+        Answer: <strong id="answerText" style="color:var(--green);"></strong>
+      </div>
+      <div id="stageGrid" class="stage-grid"></div>
+    </div>
+  </div>
+
+  <!-- Tab 2: Numbers & Geometry -->
+  <div id="tab-geometry" class="panel">
+    <div class="card">
+      <h2 style="margin-top:0;">Diné Numbers</h2>
+      <div class="num-grid">
+        {% for val, pair in numbers.items() %}
+        <div class="num-card">
+          <div class="num-val">{{ val }}</div>
+          <div>{{ pair[0] }}</div>
+          <div class="mono">{{ pair[1] }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0;">Geometry</h2>
+      <div class="shape-grid">
+        {% for sh in shapes %}
+        <div class="shape-card">
+          {% if sh.svg == 'circle' %}
+            <svg width="80" height="80"><circle cx="40" cy="40" r="30" fill="none" stroke="#38bdf8" stroke-width="3"/></svg>
+          {% elif sh.svg == 'triangle' %}
+            <svg width="80" height="80"><polygon points="40,10 70,70 10,70" fill="none" stroke="#38bdf8" stroke-width="3"/></svg>
+          {% else %}
+            <svg width="80" height="80"><rect x="14" y="14" width="52" height="52" fill="none" stroke="#38bdf8" stroke-width="3"/></svg>
+          {% endif %}
+          <div><strong>{{ sh.name }}</strong> — {{ sh.dine_raw }} (<span class="mono">{{ sh.dine_ascii }}</span>)</div>
+          <div class="mono" style="margin-top:6px;">{{ sh.ndine }}</div>
+          <div class="dine">{{ sh.sentence }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 3: Quantum Math Preview -->
+  <div id="tab-quantum" class="panel">
+    <div class="card">
+      <h2 style="margin-top:0;">Quantum Superposition in 4-Stage <span class="mono">N-dine-lang</span></h2>
+      <p style="color:var(--muted);">Demonstrating how <span class="mono">T S V O L</span> models a single-qubit Hadamard circuit step by step:</p>
+      <div class="stage-grid">
+        <div class="stage">
+          <h3>1. Thinking (Nitsáhákees)</h3>
+          <div>Initialize qubit 0 in state |0⟩ (<em>Názbąs</em>).</div>
+          <div class="mono">T-prs S-qubit-0 V-be-in O-ket-0.</div>
+        </div>
+        <div class="stage">
+          <h3>2. Planning (Nahatʼá)</h3>
+          <div>Plan Hadamard gate then Z-basis measurement.</div>
+          <div class="mono">T-fut S-1pl V-apply O-hadamard-gate L-qubit-0.</div>
+        </div>
+        <div class="stage">
+          <h3>3. Implementing (Iiná)</h3>
+          <div>Apply H|0⟩ = (|0⟩ + |1⟩)/√2 and measure.</div>
+          <div class="mono">M-now S-system V-measure O-qubit-0 L-z-basis.</div>
+          <div class="dine" id="qOutcome">Click "Run Qubit" below</div>
+        </div>
+        <div class="stage">
+          <h3>4. Reflecting (Siihasin)</h3>
+          <div>Verify probabilities sum to 1 (<em>Tʼááłáʼí</em>).</div>
+          <div class="mono">Q-prs S-probability-sum V-equal O-1.</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;">
+        <button class="primary" onclick="runQubit()">Run Qubit Measurement (50/50)</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showTab(name, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function setExpr(val) {
+    document.getElementById('exprInput').value = val;
+    solveMath();
+  }
+
+  async function solveMath() {
+    const expr = document.getElementById('exprInput').value;
+    const btn = document.getElementById('solveBtn');
+    const status = document.getElementById('solveStatus');
+    btn.disabled = true;
+    btn.textContent = 'Solving...';
+    status.style.display = 'block';
+    status.textContent = 'Running 4-stage Diné solver + Gemma 3 1B...';
+    try {
+      const res = await fetch('/api/solve', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({expression: expr})
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        status.textContent = 'Error: ' + (data.error || 'Error solving expression');
+        return;
+      }
+      status.style.display = 'none';
+      document.getElementById('mathResult').style.display = 'block';
+      document.getElementById('answerText').textContent = data.answer_dine;
+
+      const grid = document.getElementById('stageGrid');
+      grid.innerHTML = '';
+      for (const st of data.stages) {
+        const div = document.createElement('div');
+        div.className = 'stage';
+        if (st.steps) {
+          div.innerHTML = `<h3>${st.name}</h3>` + st.steps.map(s => `
+            <div style="margin-bottom:8px;">
+              <div><strong>${s.expr}</strong> — ${s.english}</div>
+              <div class="mono">${s.ndine}</div>
+              <div class="dine">${s.dine}</div>
+            </div>
+          `).join('');
+        } else {
+          div.innerHTML = `
+            <h3>${st.name}</h3>
+            <div>${st.english}</div>
+            <div class="mono" style="margin-top:4px;">${st.ndine}</div>
+            <div class="dine">${st.dine}</div>
+          `;
+        }
+        grid.appendChild(div);
+      }
+    } catch (err) {
+      status.textContent = 'Request failed: ' + err;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Solve in 4 Stages';
+    }
+  }
+
+  function runQubit() {
+    const bit = Math.random() < 0.5 ? 0 : 1;
+    const label = bit === 0 ? '|0⟩ (Názbąs / Nazbas)' : '|1⟩ (Tʼááłáʼí / TaalaiLaii)';
+    document.getElementById('qOutcome').textContent = 'Measured: ' + label;
+  }
+</script>
+</body>
+</html>
