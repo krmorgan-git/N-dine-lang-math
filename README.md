@@ -40,4 +40,11 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Open `http://127.0.0.1:5055` in your browser. *(Place `gemma3-1b-ndine-Q4_K_M.gguf` in `models/`.)*
+Open `http://127.0.0.1:5055` in your browser.
+
+### Download the Model
+Download [`gemma3-1b-ndine-Q4_K_M.gguf`](https://github.com/krmorgan-git/N-dine-lang-app/releases/download/v1.0/gemma3-1b-ndine-Q4_K_M.gguf) from [Releases](https://github.com/krmorgan-git/N-dine-lang-app/releases/tag/v1.0) and place it in `models/`:
+```bash
+mkdir -p models
+curl -L -o models/gemma3-1b-ndine-Q4_K_M.gguf https://github.com/krmorgan-git/N-dine-lang-app/releases/download/v1.0/gemma3-1b-ndine-Q4_K_M.gguf
+```
