@@ -2,7 +2,7 @@
 
 **Author:** Kelly R. Morgan, Assistant Professor of Information Technology  
 **Affiliation:** Navajo Technical University (Crownpoint, NM & Chinle, AZ)  
-**Related Spec & Studio:** [`N-dine-lang`](https://github.com/krmorgan-git/N-dine-lang) · `N-dine-lang-studio`  
+**Related Spec:** [`N-dine-lang`](https://github.com/krmorgan-git/N-dine-lang)  
 
 ---
 
