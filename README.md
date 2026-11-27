@@ -31,20 +31,31 @@
 
 ---
 
-## Quick Start
+## Setup & Installation
+
+### Option A: One-Command Install & Run (Recommended)
+
+**Linux / macOS / WSL:**
+```bash
+git clone https://github.com/krmorgan-git/N-dine-lang-math.git
+cd N-dine-lang-math
+bash start.sh
+```
+
+**Windows (Command Prompt / PowerShell):**
+```bat
+git clone https://github.com/krmorgan-git/N-dine-lang-math.git
+cd N-dine-lang-math
+start.bat
+```
+
+The script creates `.venv`, installs dependencies, downloads the ~777 MB AI model automatically on first run, and starts the web app at **<http://127.0.0.1:5055>**.
+
+### Option B: Manual Setup
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 python app.py
-```
-
-Open `http://127.0.0.1:5055` in your browser.
-
-### Download the Model
-Download [`gemma3-1b-ndine-Q4_K_M.gguf`](https://github.com/krmorgan-git/N-dine-lang-app/releases/download/v1.0/gemma3-1b-ndine-Q4_K_M.gguf) from [Releases](https://github.com/krmorgan-git/N-dine-lang-app/releases/tag/v1.0) and place it in `models/`:
-```bash
-mkdir -p models
-curl -L -o models/gemma3-1b-ndine-Q4_K_M.gguf https://github.com/krmorgan-git/N-dine-lang-app/releases/download/v1.0/gemma3-1b-ndine-Q4_K_M.gguf
 ```
