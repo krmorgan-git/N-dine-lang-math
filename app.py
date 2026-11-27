@@ -9,7 +9,36 @@ from llama_cpp import Llama
 app = Flask(__name__)
 
 BASE_DIR = Path(__file__).resolve().parent
-MODEL_PATH = BASE_DIR / "models" / "gemma3-1b-ndine-Q4_K_M.gguf"
+MODEL_FILENAME = "gemma3-1b-ndine-Q4_K_M.gguf"
+MODEL_DIR = BASE_DIR / "models"
+MODEL_PATH = MODEL_DIR / MODEL_FILENAME
+MODEL_RELEASES_PAGE = "https://github.com/krmorgan-git/N-dine-lang-app/releases"
+MODEL_RELEASE_URL = f"{MODEL_RELEASES_PAGE}/download/v1.0/{MODEL_FILENAME}"
+
+
+def ensure_model() -> Path:
+    """Ensure the local GGUF model exists, downloading from Releases if missing."""
+    MODEL_DIR.mkdir(parents=True, exist_ok=True)
+    if MODEL_PATH.exists():
+        return MODEL_PATH
+    import urllib.request
+
+    print(f"Downloading {MODEL_FILENAME} from {MODEL_RELEASE_URL}...")
+    try:
+        urllib.request.urlretrieve(MODEL_RELEASE_URL, str(MODEL_PATH))
+    except Exception as exc:
+        if MODEL_PATH.exists():
+            MODEL_PATH.unlink()
+        raise FileNotFoundError(
+            f"Could not download {MODEL_FILENAME} from {MODEL_RELEASE_URL} ({exc}).\n"
+            f"Download it manually from {MODEL_RELEASES_PAGE} into {MODEL_DIR}/ and restart app.py."
+        ) from exc
+    if not MODEL_PATH.exists() or MODEL_PATH.stat().st_size == 0:
+        raise FileNotFoundError(f"Downloaded model is missing or empty: {MODEL_PATH}")
+    return MODEL_PATH
+
+
+ensure_model()
 
 DINE_NUMBERS = {
     0: ("Názbąs", "Nazbas"),
