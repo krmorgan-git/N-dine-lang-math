@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent
 MODEL_FILENAME = "gemma3-1b-ndine-Q4_K_M.gguf"
 MODEL_DIR = BASE_DIR / "models"
 MODEL_PATH = MODEL_DIR / MODEL_FILENAME
-MODEL_RELEASES_PAGE = "https://github.com/krmorgan-git/N-dine-lang-app/releases"
+MODEL_RELEASES_PAGE = "https://github.com/krmorgan-git/N-dine-lang/releases"
 MODEL_RELEASE_URL = f"{MODEL_RELEASES_PAGE}/download/v1.0/{MODEL_FILENAME}"
 
 
